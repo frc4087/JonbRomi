@@ -16,32 +16,19 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 /**
  * A differential drive Subsystem with a RomiDriveSubsystem proxy.
  */
-public class DiffiDriveSubsystem extends SubsystemBase {
+public class DiffiDriveSubsystem extends SubsystemBase implements DiffiDrivable {
   public DiffiDriveSubsystem(RomiDriveSubsystem proxy) {
     _proxy = proxy;
     _subsystems.add(this);
     _subsystems.addAll(_proxy.getSubsystems());
   }
 
-  /**
-   * Gets the current robot pose relative to the play field. The pose is
-   * updated automatically as the robot moves relative to the starting pose
-   * (i.e.
-   * the default pose or that set by setPose()).
-   * 
-   * @return The pose.
-   */
+  @Override
   public Pose2d getPose() {
     return _odometry.getPoseMeters();
   }
 
-  /**
-   * Resets the current robot pose relative to the play field. The pose should be
-   * that of the physical robot (e.g. at the start of automomous mode).
-   * 
-   * @param pose
-   *        The pose.
-   */
+  @Override
   public void resetPose(Pose2d pose) {
     _proxy.resetGyro();
     _proxy.resetEncoders();
@@ -50,35 +37,21 @@ public class DiffiDriveSubsystem extends SubsystemBase {
         _proxy.getRightDistance(), pose);
   }
 
-  /**
-   * Gets the actual robot relative speed (not neccesarily
-   * that set by setDriveSpeeds()).
-   * 
-   * @return The speeds.
-   */
+  @Override
   public ChassisSpeeds getTrueSpeeds() {
     DifferentialDriveWheelSpeeds wheelSpeeds = new DifferentialDriveWheelSpeeds(
         _proxy.getLeftVelocity(), _proxy.getRightVelocity());
     return _kinematics.toChassisSpeeds(wheelSpeeds);
   }
 
-  /**
-   * Sets the desired robot relative speed.
-   * 
-   * @param speeds
-   *        The speeds.
-   */
+  @Override
   public void setDriveSpeeds(ChassisSpeeds speeds) {
     DifferentialDriveWheelSpeeds wheelSpeeds = _kinematics
         .toWheelSpeeds(speeds);
     setWheelSpeeds(wheelSpeeds);
   }
 
-  /**
-   * Gets the subsystems required to support this subsystem, including this one.
-   * 
-   * @return Temp output group.
-   */
+  @Override
   public List<Subsystem> getSubsystems() {
     return Collections.unmodifiableList(_subsystems);
   }
