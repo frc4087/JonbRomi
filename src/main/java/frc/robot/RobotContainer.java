@@ -19,9 +19,9 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.ArcadeDrive;
 import frc.robot.commands.AutonomousDistance;
 import frc.robot.commands.AutonomousTime;
+import frc.robot.subsystems.DiffDriveSubsystem;
 import frc.robot.subsystems.PPDriveSubsystem;
 import frc.robot.subsystems.RomiDriveSubsystem;
-import frc.robot.subsystems.DiffDriveSubsystem;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
