@@ -24,7 +24,7 @@ public class PPDriveSubsystem extends SubsystemBase {
   public PPDriveSubsystem(PPDrivable proxy) {
     _proxy = proxy;
     _subsystems.add(this);
-    _subsystems.addAll(_proxy.getSubsystems());
+    Collections.addAll(_subsystems, _proxy.getSubsystems());
 
     // Load the RobotConfig from the GUI settings. You should probably
     // store this in your Constants file
@@ -48,7 +48,7 @@ public class PPDriveSubsystem extends SubsystemBase {
         new PPLTVController(0.02),
         config,
         this::isPathFlipped,
-        (Subsystem[])getSubsystems().toArray());
+        getSubsystems());
   }
 
   /**
@@ -70,8 +70,8 @@ public class PPDriveSubsystem extends SubsystemBase {
    * 
    * @return Temp output group.
    */
-  public List<Subsystem> getSubsystems() {
-    return Collections.unmodifiableList(_subsystems);
+  public Subsystem[] getSubsystems() {
+    return _subsystems.toArray(Subsystem[]::new);
   }
 
   @Override

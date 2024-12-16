@@ -80,7 +80,6 @@ public class RobotContainer {
     // Default command is arcade drive. This will run unless another command
     // is scheduled over it.
     _romiDrive.setDefaultCommand(getArcadeDriveCommand());
-    _ppDrive.setDefaultCommand(new PathPlannerAuto("MyAutoPath"));
 
     // Example of how to use the onboard IO
     Trigger onboardButtonA = new Trigger(m_onboardIO::getButtonAPressed);
@@ -90,7 +89,7 @@ public class RobotContainer {
 
     // Setup SmartDashboard options
     m_chooser.setDefaultOption("Path Planner",
-        _ppDrive.getDefaultCommand());
+        new PathPlannerAuto("MyAutoPath"));
     m_chooser.addOption("Auto Routine Distance",
         new AutonomousDistance(_romiDrive));
     m_chooser.addOption("Auto Routine Time",
@@ -105,7 +104,8 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return m_chooser.getSelected();
+    Command command = m_chooser.getSelected();
+    return command;
   }
 
   /**

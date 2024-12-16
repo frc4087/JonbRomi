@@ -21,13 +21,20 @@ import frc.jonb.subsystems.PPDrivable;
 public class DiffDriveSubsystem extends SubsystemBase implements PPDrivable {
   /**
    * Creates an instance.
-   * @param proxy The differential drive proxy.
+   * 
+   * @param proxy
+   *        The differential drive proxy.
    */
   public DiffDriveSubsystem(DiffDrivable proxy) {
     _proxy = proxy;
 
     _subsystems.add(this);
-    _subsystems.addAll(_proxy.getSubsystems());
+    Collections.addAll(_subsystems, _proxy.getSubsystems());
+
+    _kinematics = new DifferentialDriveKinematics(
+        _proxy.getTrackWidth());
+    _odometry = new DifferentialDriveOdometry(
+        new Rotation2d(), 0.0, 0.0);
   }
 
   @Override
@@ -64,8 +71,8 @@ public class DiffDriveSubsystem extends SubsystemBase implements PPDrivable {
   }
 
   @Override
-  public List<Subsystem> getSubsystems() {
-    return Collections.unmodifiableList(_subsystems);
+  public Subsystem[] getSubsystems() {
+    return _subsystems.toArray(Subsystem[]::new);
   }
 
   @Override
@@ -82,10 +89,8 @@ public class DiffDriveSubsystem extends SubsystemBase implements PPDrivable {
   private DiffDrivable _proxy;
   private List<Subsystem> _subsystems = new ArrayList<>();
 
-  private final DifferentialDriveKinematics _kinematics = new DifferentialDriveKinematics(
-      _proxy.getTrackWidth());
-  private final DifferentialDriveOdometry _odometry = new DifferentialDriveOdometry(
-      new Rotation2d(), 0.0, 0.0);
+  private final DifferentialDriveKinematics _kinematics;
+  private final DifferentialDriveOdometry _odometry;
 
   private void setWheelSpeeds(DifferentialDriveWheelSpeeds speeds) {
     // WHEEL_MPS_MAX is based on lots of assumptions

@@ -95,7 +95,6 @@ public interface DiffDrivable extends Subsystem {
      * 
      * @return Temp output group.
      */
-    List<Subsystem> getSubsystems();
-    // personal
+    Subsystem[] getSubsystems();
 
 }

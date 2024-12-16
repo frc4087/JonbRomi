@@ -147,15 +147,11 @@ public class RomiDriveSubsystem extends SubsystemBase implements DiffDrivable {
     return Rotation2d.fromDegrees(-_gyro.getAngleZ());
   }
 
-  /**
-   * Gets the subsystems required to support this subsystem, including this one.
-   * 
-   * @return Temp output group.
-   */
   @Override
-  public List<Subsystem> getSubsystems() {
-    return Collections.unmodifiableList(_subsystems);
+  public Subsystem[] getSubsystems() {
+    return _subsystems.toArray(Subsystem[]::new);
   }
+  
   // personal
 
   private List<Subsystem> _subsystems = new ArrayList<>();

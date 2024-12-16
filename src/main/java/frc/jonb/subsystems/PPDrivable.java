@@ -60,6 +60,6 @@ public interface PPDrivable extends Subsystem {
      * 
      * @return Temp output group.
      */
-    List<Subsystem> getSubsystems();
+    Subsystem[] getSubsystems();
 
 }
