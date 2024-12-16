@@ -14,11 +14,16 @@ import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 /**
- * A differential drive Subsystem with a RomiDriveSubsystem proxy.
+ * A differential drive Subsystem that supports PathPlanner.
  */
-public class DiffiDriveSubsystem extends SubsystemBase implements DiffiDrivable {
-  public DiffiDriveSubsystem(RomiDriveSubsystem proxy) {
+public class DiffDriveSubsystem extends SubsystemBase implements PPDrivable {
+  /**
+   * Creates an instance.
+   * @param proxy The differential drive proxy.
+   */
+  public DiffDriveSubsystem(DiffDrivable proxy) {
     _proxy = proxy;
+
     _subsystems.add(this);
     _subsystems.addAll(_proxy.getSubsystems());
   }
@@ -52,6 +57,11 @@ public class DiffiDriveSubsystem extends SubsystemBase implements DiffiDrivable 
   }
 
   @Override
+  public boolean isHolonomic() {
+    return false;
+  }
+
+  @Override
   public List<Subsystem> getSubsystems() {
     return Collections.unmodifiableList(_subsystems);
   }
@@ -67,11 +77,11 @@ public class DiffiDriveSubsystem extends SubsystemBase implements DiffiDrivable 
 
   // personal
 
-  private RomiDriveSubsystem _proxy;
+  private DiffDrivable _proxy;
   private List<Subsystem> _subsystems = new ArrayList<>();
 
   private final DifferentialDriveKinematics _kinematics = new DifferentialDriveKinematics(
-      RomiDriveSubsystem.WHEEL_TRACKWIDTH_M);
+      _proxy.getTrackWidth());
   private final DifferentialDriveOdometry _odometry = new DifferentialDriveOdometry(
       new Rotation2d(), 0.0, 0.0);
 
@@ -79,9 +89,9 @@ public class DiffiDriveSubsystem extends SubsystemBase implements DiffiDrivable 
     // WHEEL_MPS_MAX is based on lots of assumptions
     // (i.e. no load, constant 4.5V, etc.)
     double leftFactor = speeds.leftMetersPerSecond
-        / RomiDriveSubsystem.WHEEL_MPS_MAX;
+        / _proxy.getSpeedMax();
     double rightFactor = speeds.rightMetersPerSecond
-        / RomiDriveSubsystem.WHEEL_MPS_MAX;
+        / _proxy.getSpeedMax();
 
     // Without PID, need to reduce motor gain and clamp range.
     double gain = 0.066;

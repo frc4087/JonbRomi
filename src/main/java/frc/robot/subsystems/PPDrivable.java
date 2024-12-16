@@ -7,25 +7,23 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 
 /**
- * Interface for a differential drive subsystem. Methods are tailored for
- * high-level control and status of a differential drive robot, such as 
- * a Romi, and for PathPlanner support.
+ * Interface for a drivetrain (differential or holonomic) that can support
+ * PathPlanner.
  */
-public interface DiffiDrivable extends Subsystem {
+public interface PPDrivable extends Subsystem {
 
     /**
      * Gets the current robot pose relative to the play field. The pose is
      * updated automatically as the robot moves relative to the starting pose
-     * (i.e.
-     * the default pose or that set by setPose()).
+     * (i.e. the default pose or that set by setPose()).
      * 
      * @return The pose.
      */
     Pose2d getPose();
 
     /**
-     * Resets the current robot pose relative to the play field. The pose should be
-     * that of the physical robot (e.g. at the start of automomous mode).
+     * Resets the current robot pose relative to the play field. The pose should
+     * be that of the physical robot (e.g. at the start of automomous mode).
      * 
      * @param pose
      *        The pose.
@@ -49,7 +47,16 @@ public interface DiffiDrivable extends Subsystem {
     void setDriveSpeeds(ChassisSpeeds speeds);
 
     /**
-     * Gets the subsystems required to support this subsystem, including this one.
+     * Returns true if the drive is holonomic (e.g. swerve), otherwise assumes
+     * the drive is differential (i.e. no lateral movement).
+     * 
+     * @return The status.
+     */
+    boolean isHolonomic();
+
+    /**
+     * Gets the subsystems required to support this subsystem, including this
+     * one.
      * 
      * @return Temp output group.
      */

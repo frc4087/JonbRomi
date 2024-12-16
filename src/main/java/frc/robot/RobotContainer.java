@@ -21,7 +21,7 @@ import frc.robot.commands.AutonomousDistance;
 import frc.robot.commands.AutonomousTime;
 import frc.robot.subsystems.PPDriveSubsystem;
 import frc.robot.subsystems.RomiDriveSubsystem;
-import frc.robot.subsystems.DiffiDriveSubsystem;
+import frc.robot.subsystems.DiffDriveSubsystem;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -35,7 +35,7 @@ import frc.robot.subsystems.DiffiDriveSubsystem;
 public class RobotContainer {
  // The robot's subsystems and commands are defined here...
  private final RomiDriveSubsystem _romiDrive = new RomiDriveSubsystem();
-  private final PPDriveSubsystem _ppDrive = new PPDriveSubsystem(new DiffiDriveSubsystem(
+  private final PPDriveSubsystem _ppDrive = new PPDriveSubsystem(new DiffDriveSubsystem(
       _romiDrive));
   private final OnBoardIO m_onboardIO = new OnBoardIO(ChannelMode.INPUT,
       ChannelMode.INPUT);

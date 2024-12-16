@@ -4,11 +4,12 @@
 
 package frc.robot.commands;
 
+import frc.robot.subsystems.DiffDrivable;
 import frc.robot.subsystems.RomiDriveSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 
 public class TurnDegrees extends Command {
-  private final RomiDriveSubsystem m_drive;
+  private final DiffDrivable m_drive;
   private final double m_degrees;
   private final double m_speed;
 

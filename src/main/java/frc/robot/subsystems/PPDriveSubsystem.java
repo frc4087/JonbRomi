@@ -16,7 +16,11 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
  * A PathPlanner drive Subsystem with a DiffiDriveSubsystem proxy.
  */
 public class PPDriveSubsystem extends SubsystemBase {
-  public PPDriveSubsystem(DiffiDrivable proxy) {
+  /**
+   * Creates an instance.
+   * @param proxy PathPlanner drivable proxy.
+   */
+  public PPDriveSubsystem(PPDrivable proxy) {
     _proxy = proxy;
     _subsystems.add(this);
     _subsystems.addAll(_proxy.getSubsystems());
@@ -77,6 +81,6 @@ public class PPDriveSubsystem extends SubsystemBase {
 
   // personal
 
-  private DiffiDrivable _proxy;
+  private PPDrivable _proxy;
   private List<Subsystem> _subsystems = new ArrayList<>();
 }
