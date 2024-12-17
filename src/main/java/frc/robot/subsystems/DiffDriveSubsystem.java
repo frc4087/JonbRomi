@@ -12,8 +12,8 @@ import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.jonb.pathplanner.PPDrivable;
 import frc.jonb.subsystems.DiffDrivable;
-import frc.jonb.subsystems.PPDrivable;
 
 /**
  * A differential drive Subsystem that supports PathPlanner.
