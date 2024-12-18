@@ -5,7 +5,6 @@
 package frc.robot.subsystems;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import edu.wpi.first.math.geometry.Rotation2d;
