@@ -4,6 +4,7 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPLTVController;
 
+import edu.wpi.first.util.ErrorMessages;
 import edu.wpi.first.wpilibj.DriverStation;
 
 /**
@@ -14,8 +15,9 @@ public class PPBridge<T extends PPDrivable> {
   /**
    * Creates an instance. For extension.
    */
-  protected PPBridge(T proxy) {
-    _proxy = proxy;
+  protected PPBridge(T drive) {
+    ErrorMessages.requireNonNullParam(drive, "drive", "PPBridge");
+    _drive = drive;
 
     // resolve PP config from PP GUI settings
     RobotConfig config;
@@ -29,23 +31,23 @@ public class PPBridge<T extends PPDrivable> {
 
     // connect PP to drivetrain
     AutoBuilder.configure(
-        _proxy::getPose,
-        _proxy::resetPose,
-        _proxy::getTrueSpeeds,
-        (speeds, feedforwards) -> _proxy.setDriveSpeeds(speeds),
+        _drive::getPose,
+        _drive::resetPose,
+        _drive::getTrueSpeeds,
+        (speeds, feedforwards) -> _drive.setDriveSpeeds(speeds),
         new PPLTVController(0.02),
         config,
         PPBridge::isPathFlipped,
-        _proxy.getSubsystems());
+        _drive.getSubsystems());
   }
 
   public T getProxy() {
-    return _proxy;
+    return _drive;
   }
 
   // personal
 
-  private T _proxy;
+  private T _drive;
 
   // class
 

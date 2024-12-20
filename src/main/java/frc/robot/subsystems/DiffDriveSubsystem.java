@@ -10,6 +10,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
+import edu.wpi.first.util.ErrorMessages;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.jonb.pathplanner.PPDrivable;
@@ -26,6 +27,7 @@ public class DiffDriveSubsystem extends SubsystemBase implements PPDrivable {
    *        The differential drive proxy.
    */
   public DiffDriveSubsystem(DiffDrivable proxy) {
+    ErrorMessages.requireNonNullParam(proxy, "proxy", "DiffDriveSubsystem");
     _proxy = proxy;
 
     _subsystems.add(this);

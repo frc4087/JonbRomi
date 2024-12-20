@@ -6,6 +6,8 @@ import edu.wpi.first.wpilibj2.command.Subsystem;
 public interface DiffDrivable extends Subsystem {
 
 	/**
+	 * 
+	 * 
 	 * Gets the trackwidth between the wheels. Intended for kinematics.
 	 * @return The width (m).
 	 */
@@ -94,5 +96,4 @@ public interface DiffDrivable extends Subsystem {
      * @return Temp output group.
      */
     Subsystem[] getSubsystems();
-
 }
