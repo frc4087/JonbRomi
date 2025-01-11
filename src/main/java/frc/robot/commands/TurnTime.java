@@ -4,9 +4,9 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj2.command.Command;
 import frc.jonb.subsystems.DiffDrivable;
 import frc.robot.subsystems.RomiDriveSubsystem;
-import edu.wpi.first.wpilibj2.command.Command;
 
 /*
  * Creates a new TurnTime command. This command will turn your robot for a
