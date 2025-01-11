@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj.DriverStation;
  */
 public class PPBridge<T extends PPDrivable> {
   /**
-   * Creates an instance. For extension.
+   * For extension.
    */
   protected PPBridge(T drive) {
     ErrorMessages.requireNonNullParam(drive, "drive", "PPBridge");
