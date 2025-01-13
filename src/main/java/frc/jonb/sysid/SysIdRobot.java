@@ -1,13 +1,16 @@
 package frc.jonb.sysid;
 
-import javax.swing.JOptionPane;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 
-import edu.wpi.first.units.Units;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+
 import edu.wpi.first.util.ErrorMessages;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 
 /**
@@ -90,28 +93,33 @@ public class SysIdRobot extends TimedRobot {
 	public void robotInit() {
 		new Thread(new Runnable() {
 			public void run() {
-				CommandXboxController hid = new CommandXboxController(0);
-
 				showContinueOrExitDialog(""
 						+ "Place the robot in an area with at least\n"
-						+ "10 feet of clear space in front of it.\n\n" +
-						"Then, enable the robot (e.g. set\n" +
+						+ "10 feet of clear space in front of it.");
+
+				showContinueOrExitDialog(""
+						+ "Enable the robot (e.g. set\n" +
 						"Robot Status to Test mode).");
 
-				hid.rightBumper().whileTrue(
+				int runKey = KeyEvent.VK_X;
+				runTest(runKey, "Quasistatic Forward",
 						_routine.quasistatic(SysIdRoutine.Direction.kForward));
-				showNextTestDialog("Quasistatic Forward");
-
-				hid.rightBumper().whileTrue(
+				runTest(runKey, "Quasistatic Reverse",
 						_routine.quasistatic(SysIdRoutine.Direction.kReverse));
-				showNextTestDialog("Quasistatic Reverse");
+				runTest(runKey,
+						"Dynamic Forward",
+						_routine.dynamic(SysIdRoutine.Direction.kForward));
+				runTest(runKey,
+						"Dynamic Forward",
+						_routine.dynamic(SysIdRoutine.Direction.kReverse));
 
-				showAllDoneDialog(""
-						+ "This application is done. If all tests have been\n" +
-						"run successfully to completion the SysId log is\n"
-						+ "will be complete. Run the SysId tool to analyze\n"
-						+ "the completed log data to determine the robot\n" +
-						"characterization constants.");
+				JOptionPane.showMessageDialog(null,
+						"All SysId tests are done and the SysId log\n" +
+								"should be complete. Run the SysId tool to analyze\n"
+								+ "the completed log data to determine the robot\n"
+								+
+								"characterization constants.",
+						"SysIdRobot", JOptionPane.PLAIN_MESSAGE);
 
 				System.exit(0);
 			}
@@ -124,6 +132,97 @@ public class SysIdRobot extends TimedRobot {
 	private final SysIdRoutine _routine;
 
 	// class
+
+	/**
+	 * Runs a SysId test by notifying the user to press and hold a given
+	 * keyboard key.
+	 * 
+	 * @param runKey
+	 *            Key code (KeyEvent.VK_???) used to run the test.
+	 * @param testName
+	 *            Name of the test.
+	 * @param test
+	 *            The test command created using SysIdRoutine.
+	 */
+	public static void runTest(int runKey, String testName, Command test) {
+		// build dialog
+		JPanel panel = new JPanel();
+		panel.add(new JLabel(
+				"<html>Ready to run test >>> " + testName + " <<<.<br><br>" +
+						"Press and hold keyboard key ["
+						+ KeyEvent.getKeyText(runKey) + "] until the<br>" +
+						"the robot stops moving, which means the test<br>" +
+						"completed successfully.<br><br>" +
+						"If there is a problem release the key<br>" +
+						"to stop the test."));
+
+		// listen for test run key
+		panel.addKeyListener(new KeyListener() {
+			@Override
+			public void keyTyped(KeyEvent evt) {
+				// do nothing
+			}
+
+			@Override
+			public void keyPressed(KeyEvent evt) {
+				if (evt.getKeyCode() == runKey) {
+					CommandScheduler.getInstance().schedule(test);
+				}
+			}
+
+			@Override
+			public void keyReleased(KeyEvent evt) {
+				// Handle key released events
+				if (evt.getKeyCode() == runKey) {
+					CommandScheduler.getInstance().cancel(test);
+					assureTestComplete(testName, test);
+				}
+			}
+		});
+
+		panel.setFocusable(true);
+		panel.requestFocusInWindow();
+
+		// wait until user is done
+		int result = JOptionPane.showOptionDialog(null,
+				panel,
+				"SysIdRobot",
+				JOptionPane.DEFAULT_OPTION,
+				JOptionPane.WARNING_MESSAGE,
+				null,
+				new Object[] { "Next Test", "Exit" }, null);
+
+		if (result != 0) {
+			// not Continue: assume exit
+			System.exit(0);
+		}
+
+		// if test incomplete, stop it and quit
+		assureTestComplete(testName, test);
+	}
+
+	/**
+	 * Called when a SysId test is supposed to be complete. If it is not, the
+	 * user is warned and the application exits.
+	 * 
+	 * @param testName
+	 *            Name of the test.
+	 * @param test
+	 *            The test command.
+	 */
+	public static void assureTestComplete(String testName, Command test) {
+		if (!test.isFinished()) {
+			CommandScheduler.getInstance().cancel(test);
+
+			JOptionPane.showMessageDialog(null,
+					"This test and the SysId log are incomplete.\n\n"
+							+
+							"Re-run the application to start over.",
+					"SysIdRobot", JOptionPane.ERROR_MESSAGE);
+
+			System.exit(0);
+		}
+	}
 
 	/**
 	 * Shows a dialog with a message, a "Continue" button, and a "Exit" button.
@@ -145,74 +244,4 @@ public class SysIdRobot extends TimedRobot {
 			System.exit(0);
 		}
 	}
-
-	/**
-	 * Shows a continue-or-exit dialog prompting the user to run the next SysId
-	 * test.
-	 * 
-	 * @param testName
-	 *            The test name.
-	 */
-	public static void showNextTestDialog(String testName) {
-		showContinueOrExitDialog(
-				"Ready to run test >>> " + testName + " <<<.\n\n" +
-						"Press and hold the Right Bumper button until the\n" +
-						"the robot stops moving, which means the test\n" +
-						"completed\n" +
-						"successfully.\n\n" +
-						"If there is a problem, release the button,\n" +
-						"exit the application, and start over.");
-	}
-
-	/**
-	 * Shows a dialog with a message, a "Done" button. he application exits when
-	 * the button is pressed or the dialog is closed.
-	 * 
-	 * @param message
-	 *            The message.
-	 */
-	public static void showAllDoneDialog(String message) {
-		JOptionPane.showOptionDialog(null, message + "\n\n",
-				"SysIdRobot",
-				JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE,
-				null,
-				new Object[] { "Done" }, "Done");
-
-		System.exit(0);
-	}
-
-	/**
-	 * Test command that drives the robot forward at a "slow" speed. Used to
-	 * test robot motor activation and HID button binding.
-	 */
-	public static class MyTestCommand extends Command {
-		public MyTestCommand(SysIdDrivable drive) {
-			_drive = drive;
-			addRequirements(_drive);
-		}
-
-		@Override
-		public boolean runsWhenDisabled() {
-			return true;
-		}
-
-		@Override
-		public void initialize() {
-			System.out.println("Starting MyTestCommand");
-		}
-
-		@Override
-		public void execute() {
-			_drive.setVoltage(Units.Volts.of(3.0));
-		}
-
-		@Override
-		public void end(boolean interrupted) {
-			System.out.println("Stopping MyTestCommand");
-			_drive.setVoltage(Units.Volts.of(0.0));
-		}
-
-		private SysIdDrivable _drive;
-	}
-
 }
