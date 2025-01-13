@@ -39,6 +39,8 @@ public class DiffDriveSubsystem extends SubsystemBase implements PPDrivable {
         new Rotation2d(), 0.0, 0.0);
   }
 
+  // PPDrivable
+
   @Override
   public Pose2d getPose() {
     return _odometry.getPoseMeters();
@@ -77,6 +79,8 @@ public class DiffDriveSubsystem extends SubsystemBase implements PPDrivable {
     return _subsystems.toArray(Subsystem[]::new);
   }
 
+  // Subsystem
+  
   @Override
   public void periodic() {
     super.periodic();

@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 public class PPBridge<T extends PPDrivable> {
   /**
    * For extension.
+   * @param drive target drivetrain.
    */
   protected PPBridge(T drive) {
     ErrorMessages.requireNonNullParam(drive, "drive", "PPBridge");
@@ -41,7 +42,11 @@ public class PPBridge<T extends PPDrivable> {
         _drive.getSubsystems());
   }
 
-  public T getProxy() {
+  /**
+   * Gets the target drivetrain.
+   * @return Shared exposed drivetrain.
+   */
+  public T getDrive() {
     return _drive;
   }
 
