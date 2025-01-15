@@ -1,4 +1,4 @@
-package frc.robot.subsystems;
+package frc.jonb.subsystems;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -14,7 +14,6 @@ import edu.wpi.first.util.ErrorMessages;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.jonb.pathplanner.PPDrivable;
-import frc.jonb.subsystems.DiffDrivable;
 
 /**
  * A differential drive Subsystem that supports PathPlanner.
