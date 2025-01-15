@@ -148,16 +148,18 @@ public class SysIdRobot extends TimedRobot {
 		// build dialog
 		JPanel panel = new JPanel();
 		panel.add(new JLabel(
-				"<html>Ready to run test >>> " + testName + " <<<.<br><br>" +
-						"Press and hold keyboard key ["
-						+ KeyEvent.getKeyText(runKey) + "] until the<br>" +
+				"<html>Ready to run test [ " + testName + " ].<br><br>" +
+						"Press and hold keyboard key [ "
+						+ KeyEvent.getKeyText(runKey) + " ] until the<br>" +
 						"the robot stops moving, which means the test<br>" +
 						"completed successfully.<br><br>" +
 						"If there is a problem release the key<br>" +
-						"to stop the test."));
+						"to stop the test.<br><br>"));
 
 		// listen for test run key
 		panel.addKeyListener(new KeyListener() {
+			boolean isTestStarted = false;
+
 			@Override
 			public void keyTyped(KeyEvent evt) {
 				// do nothing
@@ -166,6 +168,10 @@ public class SysIdRobot extends TimedRobot {
 			@Override
 			public void keyPressed(KeyEvent evt) {
 				if (evt.getKeyCode() == runKey) {
+					if(isTestStarted) return; // do nothing
+					isTestStarted = true;
+
+					System.out.println("Starting test [ " + testName + " ].");
 					CommandScheduler.getInstance().schedule(test);
 				}
 			}
@@ -174,6 +180,7 @@ public class SysIdRobot extends TimedRobot {
 			public void keyReleased(KeyEvent evt) {
 				// Handle key released events
 				if (evt.getKeyCode() == runKey) {
+					System.out.println("Stopping test [ " + testName + " ].");
 					CommandScheduler.getInstance().cancel(test);
 					assureTestComplete(testName, test);
 				}
@@ -188,7 +195,7 @@ public class SysIdRobot extends TimedRobot {
 				panel,
 				"SysIdRobot",
 				JOptionPane.DEFAULT_OPTION,
-				JOptionPane.WARNING_MESSAGE,
+				JOptionPane.INFORMATION_MESSAGE,
 				null,
 				new Object[] { "Next Test", "Exit" }, null);
 
