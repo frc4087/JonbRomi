@@ -166,9 +166,11 @@ public class SysIdRobot extends TimedRobot {
 			}
 
 			@Override
-			public void keyPressed(KeyEvent evt) {
+			public void keyPressed(KeyEvent evt) { 
 				if (evt.getKeyCode() == runKey) {
-					if(isTestStarted) return; // do nothing
+					if(isTestStarted) {// handle auto-repeat
+						return; // do nothing
+					}
 					isTestStarted = true;
 
 					System.out.println("Starting test [ " + testName + " ].");
