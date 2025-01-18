@@ -130,14 +130,12 @@ public class SysIdRobot extends TimedRobot {
 
 	// personal
 
-	private final SysIdDrivable _drive;
-	private final SysIdRoutine _routine;
-
-	// class
-
 	/**
 	 * Runs a SysId test by notifying the user to press and hold a given
 	 * keyboard key.
+	 * <p>
+	 * Not a static method because mutable state needed for enclosed anonymous
+	 * class.
 	 * 
 	 * @param sequenceId
 	 *            Indicates the test number in the sequence. Should be of the
@@ -149,8 +147,11 @@ public class SysIdRobot extends TimedRobot {
 	 * @param test
 	 *            The test command created using SysIdRoutine.
 	 */
-	public static void runTest(String sequenceId, String testName, int runKey,
+	public void runTest(String sequenceId, String testName, int runKey,
 			Command test) {
+
+		_isTestStarted = false;
+
 		// build dialog
 		JPanel panel = new JPanel();
 		panel.add(new JLabel(
@@ -163,8 +164,6 @@ public class SysIdRobot extends TimedRobot {
 
 		// listen for test run key
 		panel.addKeyListener(new KeyListener() {
-			boolean isTestStarted = false;
-
 			@Override
 			public void keyTyped(KeyEvent evt) {
 				// do nothing
@@ -173,10 +172,10 @@ public class SysIdRobot extends TimedRobot {
 			@Override
 			public void keyPressed(KeyEvent evt) {
 				if (evt.getKeyCode() == runKey) {
-					if (isTestStarted) {// handle auto-repeat
+					if (_isTestStarted) {// handle auto-repeat
 						return; // do nothing
 					}
-					isTestStarted = true;
+					_isTestStarted = true;
 
 					System.out.println("Starting test [ " + testName + " ].");
 					CommandScheduler.getInstance().schedule(test);
@@ -189,7 +188,7 @@ public class SysIdRobot extends TimedRobot {
 				if (evt.getKeyCode() == runKey) {
 					System.out.println("Stopping test [ " + testName + " ].");
 					CommandScheduler.getInstance().cancel(test);
-					assureTestComplete(testName, test);
+					assureTestFinished(testName, test);
 				}
 			}
 		});
@@ -207,16 +206,52 @@ public class SysIdRobot extends TimedRobot {
 				new Object[] { "Next Test", "Exit" }, null);
 
 		if (result != 0) {
-			// not Continue: assume exit
+			// user chose to not Continue
 			System.exit(0);
 		}
 
-		// if test incomplete, stop it and quit
-		assureTestComplete(testName, test);
+		// if log is incomplete, quit
+		assureTestStarted(testName, test, _isTestStarted);
+		assureTestFinished(testName, test);
+	}
+
+	private final SysIdDrivable _drive;
+	private final SysIdRoutine _routine;
+
+	private boolean _isTestStarted;
+
+	// class
+
+	/**
+	 * Called when a SysId test is supposed to have been started. If it is not,
+	 * the
+	 * user is warned and the application exits.
+	 * 
+	 * @param testName
+	 *            Name of the test.
+	 * @param test
+	 *            The test command.
+	 * @param isStarted
+	 *            True if the test was started (no way to tell from the
+	 *            command).
+	 */
+	public static void assureTestStarted(String testName, Command test,
+			boolean isStarted) {
+		if (!isStarted) {
+			CommandScheduler.getInstance().cancel(test); // just in case
+
+			JOptionPane.showMessageDialog(null,
+					"Test [" + testName + "] did not start.\n\n" +
+							"The SysId log is incomplete.\n\n" +
+							"Re-run the application to start over.",
+					"SysIdRobot", JOptionPane.ERROR_MESSAGE);
+
+			System.exit(0);
+		}
 	}
 
 	/**
-	 * Called when a SysId test is supposed to be complete. If it is not, the
+	 * Called when a SysId test is supposed to be finished. If it is not, the
 	 * user is warned and the application exits.
 	 * 
 	 * @param testName
@@ -224,13 +259,13 @@ public class SysIdRobot extends TimedRobot {
 	 * @param test
 	 *            The test command.
 	 */
-	public static void assureTestComplete(String testName, Command test) {
+	public static void assureTestFinished(String testName, Command test) {
 		if (!test.isFinished()) {
 			CommandScheduler.getInstance().cancel(test);
 
 			JOptionPane.showMessageDialog(null,
-					"This test and the SysId log are incomplete.\n\n"
-							+
+					"Test [" + testName + "] did not finish.\n\n" +
+							"The SysId log is incomplete.\n\n" +
 							"Re-run the application to start over.",
 					"SysIdRobot", JOptionPane.ERROR_MESSAGE);
 
