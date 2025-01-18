@@ -43,86 +43,85 @@ import frc.robot.subsystems.RomiDriveSubsystem;
  * Your subsystem configuration should take the overlays into account
  */
 public class RobotContainer {
-  /**
-   * Creates an instance.
-   */
-  public RobotContainer() {
-    // build subsystems
-    _romiDrive = new RomiDriveSubsystem();
-    _ppDrive = new DiffDriveSubsystem(_romiDrive);
+	/**
+	 * Creates an instance.
+	 */
+	public RobotContainer() {
+		// build subsystems
+		_romiDrive = new RomiDriveSubsystem();
+		_ppDrive = new DiffDriveSubsystem(_romiDrive);
 
-    // connect PathPlanner (first)
-    PPBridge.buildBridge(_ppDrive);
+		// connect PathPlanner (first)
+		PPBridge.buildBridge(_ppDrive);
 
-    // build IO
-    _chooser = new SendableChooser<>();
-    configChooser(_chooser);
+		// build IO
+		_chooser = new SendableChooser<>();
+		configChooser(_chooser);
 
-    _onboardIO = new OnBoardIO(ChannelMode.INPUT, ChannelMode.INPUT);
-    configButtons(_onboardIO);
+		_onboardIO = new OnBoardIO(ChannelMode.INPUT, ChannelMode.INPUT);
+		configButtons(_onboardIO);
 
-    _controller = new Joystick(0);
+		_controller = new Joystick(0);
 
-    // default commands
-    // Note: This runs unless another command is scheduled over it.
-    _romiDrive.setDefaultCommand(getArcadeDriveCommand());
-  }
+		// default commands
+		// Note: This runs unless another command is scheduled over it.
+		_romiDrive.setDefaultCommand(getArcadeDriveCommand());
+	}
 
-  /**
-   * Use this method to define your button->command mappings. Buttons can be
-   * created by instantiating a {@link GenericHID} or one of its subclasses
-   * ({@link edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and
-   * then passing it to a
-   * {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
-   */
-  protected void configButtons(OnBoardIO io) {
-    // Example of how to use the onboard IO
-    Trigger onboardButtonA = new Trigger(io::getButtonAPressed);
-    onboardButtonA
-        .onTrue(new PrintCommand("Button A Pressed"))
-        .onFalse(new PrintCommand("Button A Released"));
-  }
+	/**
+	 * Use this method to define your button->command mappings. Buttons can be
+	 * created by instantiating a {@link GenericHID} or one of its subclasses
+	 * ({@link edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and
+	 * then passing it to a
+	 * {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
+	 */
+	protected void configButtons(OnBoardIO io) {
+		// Example of how to use the onboard IO
+		new Trigger(io::getButtonAPressed)
+				.onTrue(new PrintCommand("Button A Pressed"))
+				.onFalse(new PrintCommand("Button A Released"));
+	}
 
-  /**
-   * Builds a chooser for the SmartDashboard GUI. MUST first build PPBridge.
-   */
-  protected void configChooser(SendableChooser<Command> chooser) {
-    chooser.setDefaultOption("Path Planner",
-        new PathPlannerAuto("MyAutoPath"));
-    chooser.addOption("Auto Routine Distance",
-        new AutonomousDistance(_romiDrive));
-    chooser.addOption("Auto Routine Time",
-        new AutonomousTime(_romiDrive));
+	/**
+	 * Builds a chooser for the SmartDashboard GUI. MUST first build PPBridge.
+	 */
+	protected void configChooser(SendableChooser<Command> chooser) {
+		chooser.setDefaultOption("Path Planner",
+				new PathPlannerAuto("MyAutoPath"));
+		chooser.addOption("Auto Routine Distance",
+				new AutonomousDistance(_romiDrive));
+		chooser.addOption("Auto Routine Time",
+				new AutonomousTime(_romiDrive));
 
-    SmartDashboard.putData(chooser);
-  }
+		SmartDashboard.putData(chooser);
+	}
 
-  /**
-   * Use this to pass the autonomous command to the main {@link Robot} class.
-   *
-   * @return the command to run in autonomous
-   */
-  public Command getAutonomousCommand() {
-    Command command = _chooser.getSelected();
-    return command;
-  }
+	/**
+	 * Use this to pass the autonomous command to the main {@link Robot} class.
+	 *
+	 * @return the command to run in autonomous
+	 */
+	public Command getAutonomousCommand() {
+		Command command = _chooser.getSelected();
+		return command;
+	}
 
-  /**
-   * Use this to pass the teleop command to the main {@link Robot} class.
-   *
-   * @return the command to run in teleop
-   */
-  public Command getArcadeDriveCommand() {
-    return new ArcadeDrive(
-        _romiDrive, () -> -_controller.getRawAxis(1),
-        () -> -_controller.getRawAxis(2));
-  }
+	/**
+	 * Use this to pass the teleop command to the main {@link Robot} class.
+	 *
+	 * @return the command to run in teleop
+	 */
+	public Command getArcadeDriveCommand() {
+		return new ArcadeDrive(
+				_romiDrive, () -> -_controller.getRawAxis(1),
+				() -> -_controller.getRawAxis(2));
+	}
 
-  // personal
+	// personal
 
-  private final RomiDriveSubsystem _romiDrive;
-  private final PPDrivable _ppDrive;
-  private final OnBoardIO _onboardIO;
-  private final SendableChooser<Command> _chooser;
-  private final Joystick _controller;
+	private final RomiDriveSubsystem _romiDrive;
+	private final PPDrivable _ppDrive;
+	private final OnBoardIO _onboardIO;
+	private final SendableChooser<Command> _chooser;
+	private final Joystick _controller;
 }
