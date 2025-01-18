@@ -33,5 +33,6 @@
   "[java]": {
     "editor.insertSpaces": false,
     "editor.detectIndentation": false
-  }
+  },
+  "java.dependency.packagePresentation": "hierarchical"
 }

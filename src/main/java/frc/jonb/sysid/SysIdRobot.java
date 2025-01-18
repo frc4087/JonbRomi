@@ -102,15 +102,17 @@ public class SysIdRobot extends TimedRobot {
 						"Robot Status to Test mode).");
 
 				int runKey = KeyEvent.VK_X;
-				runTest(runKey, "Quasistatic Forward",
+				runTest("1 of 4",
+						"Quasistatic Forward", runKey,
 						_routine.quasistatic(SysIdRoutine.Direction.kForward));
-				runTest(runKey, "Quasistatic Reverse",
+				runTest("2 of 4",
+						"Quasistatic Reverse", runKey,
 						_routine.quasistatic(SysIdRoutine.Direction.kReverse));
-				runTest(runKey,
-						"Dynamic Forward",
+				runTest("3 of 4",
+						"Dynamic Forward", runKey,
 						_routine.dynamic(SysIdRoutine.Direction.kForward));
-				runTest(runKey,
-						"Dynamic Forward",
+				runTest("4 of 4",
+						"Dynamic Forward", runKey,
 						_routine.dynamic(SysIdRoutine.Direction.kReverse));
 
 				JOptionPane.showMessageDialog(null,
@@ -137,24 +139,27 @@ public class SysIdRobot extends TimedRobot {
 	 * Runs a SysId test by notifying the user to press and hold a given
 	 * keyboard key.
 	 * 
-	 * @param runKey
-	 *            Key code (KeyEvent.VK_???) used to run the test.
+	 * @param sequenceId
+	 *            Indicates the test number in the sequence. Should be of the
+	 *            form "2 of 6".
 	 * @param testName
 	 *            Name of the test.
+	 * @param runKey
+	 *            Key code (KeyEvent.VK_???) used to run the test.
 	 * @param test
 	 *            The test command created using SysIdRoutine.
 	 */
-	public static void runTest(int runKey, String testName, Command test) {
+	public static void runTest(String sequenceId, String testName, int runKey,
+			Command test) {
 		// build dialog
 		JPanel panel = new JPanel();
 		panel.add(new JLabel(
-				"<html>Ready to run test [ " + testName + " ].<br><br>" +
+				"<html>TEST (" + sequenceId + "): " + testName + "<br><br>" +
 						"Press and hold keyboard key [ "
 						+ KeyEvent.getKeyText(runKey) + " ] until the<br>" +
-						"the robot stops moving, which means the test<br>" +
-						"completed successfully.<br><br>" +
+						"the robot stops moving (test is done).<br><br>" +
 						"If there is a problem release the key<br>" +
-						"to stop the test.<br><br>"));
+						"to stop the test immediately.<br><br>"));
 
 		// listen for test run key
 		panel.addKeyListener(new KeyListener() {
@@ -166,9 +171,9 @@ public class SysIdRobot extends TimedRobot {
 			}
 
 			@Override
-			public void keyPressed(KeyEvent evt) { 
+			public void keyPressed(KeyEvent evt) {
 				if (evt.getKeyCode() == runKey) {
-					if(isTestStarted) {// handle auto-repeat
+					if (isTestStarted) {// handle auto-repeat
 						return; // do nothing
 					}
 					isTestStarted = true;
