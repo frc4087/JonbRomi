@@ -89,9 +89,9 @@ public class RobotContainer {
 		chooser.setDefaultOption("Path Planner",
 				new PathPlannerAuto("MyAutoPath"));
 		chooser.addOption("Auto Routine Distance",
-				new AutonomousDistance(_romiDrive));
+				new AutonomousDistance(0.5, 0.5, _romiDrive));
 		chooser.addOption("Auto Routine Time",
-				new AutonomousTime(_romiDrive));
+				new AutonomousTime(0.5, 3.0, _romiDrive));
 
 		SmartDashboard.putData(chooser);
 	}

@@ -8,17 +8,24 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.subsystems.RomiDriveSubsystem;
 
 public class AutonomousDistance extends SequentialCommandGroup {
-  /**
-   * Creates a new Autonomous Drive based on distance. This will drive out for a specified distance,
-   * turn around and drive back.
-   *
-   * @param drivetrain The drivetrain subsystem on which this command will run
-   */
-  public AutonomousDistance(RomiDriveSubsystem drivetrain) {
-    addCommands(
-        new DriveDistance(-0.5, .25, drivetrain),
-        new TurnDegrees(-0.5, 180, drivetrain),
-        new DriveDistance(-0.5, .25, drivetrain),
-        new TurnDegrees(0.5, 180, drivetrain));
-  }
+	/**
+	 * Command that drives forward a given distance at a given speed, turns
+	 * around, drives back to the original position, and turns around to the
+	 * original orientation.
+	 *
+	 * @param drivetrain
+	 *            The target drivetrain.
+	 * @param speedFactor
+	 *            Speed factor relative to max [-1, +1].
+	 * @param meters
+	 *            Distance (m, >0).
+	 */
+	public AutonomousDistance(double speedFactor, double meters,
+			RomiDriveSubsystem drivetrain) {
+		addCommands(
+				new DriveDistance( speedFactor, meters, drivetrain),
+				new TurnDegrees(speedFactor, 180, drivetrain),
+				new DriveDistance(speedFactor, meters, drivetrain),
+				new TurnDegrees(speedFactor, -180, drivetrain));
+	}
 }
