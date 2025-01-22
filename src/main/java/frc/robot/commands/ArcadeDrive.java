@@ -7,49 +7,55 @@ package frc.robot.commands;
 import java.util.function.Supplier;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.jonb.subsystems.DiffDrivable;
-import frc.robot.subsystems.RomiDriveSubsystem;
+import frc.jonb.subsystems.DiffDriveSubsystem;
 
+/**
+ * Command supporting "arcade" style (forward and turn) drive control, such
+ * as from a hand controller. Runs until explicitely terminated.
+ */
 public class ArcadeDrive extends Command {
-  private final DiffDrivable m_drivetrain;
-  private final Supplier<Double> m_xaxisSpeedSupplier;
-  private final Supplier<Double> m_zaxisRotateSupplier;
+	private final DiffDriveSubsystem m_drivetrain;
+	private final Supplier<Double> m_forwardSource;
+	private final Supplier<Double> m_turnSource;
 
-  /**
-   * Creates a new ArcadeDrive. This command will drive your robot according to the speed supplier
-   * lambdas. This command does not terminate.
-   *
-   * @param drivetrain The drivetrain subsystem on which this command will run
-   * @param xaxisSpeedSupplier Lambda supplier of forward/backward speed
-   * @param zaxisRotateSupplier Lambda supplier of rotational speed
-   */
-  public ArcadeDrive(
-      RomiDriveSubsystem drivetrain,
-      Supplier<Double> xaxisSpeedSupplier,
-      Supplier<Double> zaxisRotateSupplier) {
-    m_drivetrain = drivetrain;
-    m_xaxisSpeedSupplier = xaxisSpeedSupplier;
-    m_zaxisRotateSupplier = zaxisRotateSupplier;
-    addRequirements(drivetrain);
-  }
+	/**
+	 * Creates an instance.
+	 * 
+	 * @param drivetrain
+	 *            The target drivetrain.
+	 * @param forwardSource
+	 *            Supplier of forward speed factor relative to max [-1, +1].
+	 * @param turnSource
+	 *            Supplier of CCW turn speed factor relative to max [-1, +1].
+	 */
+	public ArcadeDrive(
+			DiffDriveSubsystem drivetrain,
+			Supplier<Double> forwardSource,
+			Supplier<Double> turnSource) {
+		m_drivetrain = drivetrain;
+		m_forwardSource = forwardSource;
+		m_turnSource = turnSource;
+		addRequirements(drivetrain);
+	}
 
-  // Called when the command is initially scheduled.
-  @Override
-  public void initialize() {}
+	// Command
 
-  // Called every time the scheduler runs while the command is scheduled.
-  @Override
-  public void execute() {
-    m_drivetrain.arcadeDrive(m_xaxisSpeedSupplier.get(), m_zaxisRotateSupplier.get());
-  }
+	@Override
+	public void initialize() {}
 
-  // Called once the command ends or is interrupted.
-  @Override
-  public void end(boolean interrupted) {}
+	@Override
+	public void execute() {
+		m_drivetrain.arcadeDrive(m_forwardSource.get(),
+				m_turnSource.get());
+	}
 
-  // Returns true when the command should end.
-  @Override
-  public boolean isFinished() {
-    return false;
-  }
+	@Override
+	public void end(boolean interrupted) {
+		// nothing to do
+	}
+
+	@Override
+	public boolean isFinished() {
+		return false; // run forever
+	}
 }

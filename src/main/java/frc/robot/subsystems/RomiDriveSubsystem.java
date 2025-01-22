@@ -27,6 +27,9 @@ import frc.jonb.sysid.SysIdDrivable;
 
 /**
  * A DriveSubsystem for a Romi robot.
+ * <p>
+ * Derived from RomiTutorial2023/src/main/java/frc/robot/subsystems
+ * /Drivetrain.java
  */
 public class RomiDriveSubsystem extends SubsystemBase
 		implements DiffDrivable, SysIdDrivable {
@@ -42,14 +45,16 @@ public class RomiDriveSubsystem extends SubsystemBase
 	public static final double LEFT_KS = 0.8029;
 	public static final double LEFT_KV = 10.076;
 	public static final double LEFT_KA = 2.0878;
-	public static final double LEFT_KP = 32.049;
-	public static final double LEFT_KD = 8.4604;
+	public static final double LEFT_KP = 2.7555;
+	public static final double LEFT_KI = 0.0000;
+	public static final double LEFT_KD = 0.0000;
 
 	public static final double RIGHT_KS = 0.4714;
 	public static final double RIGHT_KV = 9.7982;
 	public static final double RIGHT_KA = 2.5502;
-	public static final double RIGHT_KP = 30.126;
-	public static final double RIGHT_KD = 8.6991;
+	public static final double RIGHT_KP = 3.8658;
+	public static final double RIGHT_KI = 0.00001;
+	public static final double RIGHT_KD = 0.00001;
 
 	/** Creates a new Drivetrain. */
 	public RomiDriveSubsystem() {
@@ -61,6 +66,7 @@ public class RomiDriveSubsystem extends SubsystemBase
 				.setDistancePerPulse(WHEEL_CIRCUMFERENCE_M / WHEEL_ENCODER_CPR);
 		_leftFeedforward = new SimpleMotorFeedforward(LEFT_KS, LEFT_KV,
 				LEFT_KA);
+		_leftVelocityPid = new PIDController(LEFT_KP, LEFT_KI, LEFT_KD);
 
 		_rightMotor = new Spark(1);
 		_rightMotor.setInverted(true);
@@ -69,6 +75,7 @@ public class RomiDriveSubsystem extends SubsystemBase
 				.setDistancePerPulse(WHEEL_CIRCUMFERENCE_M / WHEEL_ENCODER_CPR);
 		_rightFeedforward = new SimpleMotorFeedforward(RIGHT_KS, RIGHT_KV,
 				RIGHT_KA);
+		_rightVelocityPid = new PIDController(RIGHT_KP, RIGHT_KI, RIGHT_KD);
 
 		resetEncoders();
 	}

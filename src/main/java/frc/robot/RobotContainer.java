@@ -17,11 +17,11 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.jonb.pathplanner.PPBridge;
-import frc.jonb.pathplanner.PPDrivable;
+import frc.jonb.subsystems.DiffDrivable;
 import frc.jonb.subsystems.DiffDriveSubsystem;
 import frc.robot.commands.ArcadeDrive;
-import frc.robot.commands.AutonomousDistance;
-import frc.robot.commands.AutonomousTime;
+import frc.robot.commands.AutoDistance;
+import frc.robot.commands.AutoDuration;
 import frc.robot.subsystems.RomiDriveSubsystem;
 
 /**
@@ -48,11 +48,11 @@ public class RobotContainer {
 	 */
 	public RobotContainer() {
 		// build subsystems
-		_romiDrive = new RomiDriveSubsystem();
-		_ppDrive = new DiffDriveSubsystem(_romiDrive);
+		DiffDrivable romiDrive = new RomiDriveSubsystem();
+		_diffDrive = new DiffDriveSubsystem(romiDrive);
 
 		// connect PathPlanner (first)
-		PPBridge.buildBridge(_ppDrive);
+		PPBridge.buildBridge(_diffDrive);
 
 		// build IO
 		_chooser = new SendableChooser<>();
@@ -65,7 +65,7 @@ public class RobotContainer {
 
 		// default commands
 		// Note: This runs unless another command is scheduled over it.
-		_romiDrive.setDefaultCommand(getArcadeDriveCommand());
+		_diffDrive.setDefaultCommand(getArcadeDriveCommand());
 	}
 
 	/**
@@ -89,9 +89,9 @@ public class RobotContainer {
 		chooser.setDefaultOption("Path Planner",
 				new PathPlannerAuto("MyAutoPath"));
 		chooser.addOption("Auto Routine Distance",
-				new AutonomousDistance(0.5, 0.5, _romiDrive));
+				new AutoDistance(0.5, 0.5, _diffDrive));
 		chooser.addOption("Auto Routine Time",
-				new AutonomousTime(0.5, 3.0, _romiDrive));
+				new AutoDuration(0.5, 3.0, _diffDrive));
 
 		SmartDashboard.putData(chooser);
 	}
@@ -113,14 +113,13 @@ public class RobotContainer {
 	 */
 	public Command getArcadeDriveCommand() {
 		return new ArcadeDrive(
-				_romiDrive, () -> -_controller.getRawAxis(1),
+				_diffDrive, () -> -_controller.getRawAxis(1),
 				() -> -_controller.getRawAxis(2));
 	}
 
 	// personal
 
-	private final RomiDriveSubsystem _romiDrive;
-	private final PPDrivable _ppDrive;
+	private final DiffDriveSubsystem _diffDrive;
 	private final OnBoardIO _onboardIO;
 	private final SendableChooser<Command> _chooser;
 	private final Joystick _controller;
