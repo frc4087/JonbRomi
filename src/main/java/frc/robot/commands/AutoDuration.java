@@ -21,10 +21,10 @@ public class AutoDuration extends SequentialCommandGroup {
 	 * @param speedFactor
 	 *            Speed factor relative to max [-1, +1].
 	 * @param duration
-	 *            Distance (s, >=).
+	 *            Duration (s, >=).
 	 */
-	public AutoDuration(double speedFactor, double duration,
-			DiffDriveSubsystem drivetrain) {
+	public AutoDuration(DiffDriveSubsystem drivetrain, double speedFactor,
+			double duration) {
 		addCommands(
 				new DriveDuration(drivetrain, speedFactor, duration),
 				new TurnDuration(drivetrain, speedFactor, duration),

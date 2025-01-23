@@ -22,6 +22,10 @@ import frc.jonb.subsystems.DiffDriveSubsystem;
 import frc.robot.commands.ArcadeDrive;
 import frc.robot.commands.AutoDistance;
 import frc.robot.commands.AutoDuration;
+import frc.robot.commands.DriveDistance;
+import frc.robot.commands.DriveDuration;
+import frc.robot.commands.TurnAngle;
+import frc.robot.commands.TurnDuration;
 import frc.robot.subsystems.RomiDriveSubsystem;
 
 /**
@@ -86,12 +90,24 @@ public class RobotContainer {
 	 * Builds a chooser for the SmartDashboard GUI. MUST first build PPBridge.
 	 */
 	protected void configChooser(SendableChooser<Command> chooser) {
-		chooser.setDefaultOption("Path Planner",
+		chooser.setDefaultOption("PathPlanner",
 				new PathPlannerAuto("MyAutoPath"));
-		chooser.addOption("Auto Routine Distance",
-				new AutoDistance(0.5, 0.5, _diffDrive));
-		chooser.addOption("Auto Routine Time",
-				new AutoDuration(0.5, 3.0, _diffDrive));
+		chooser.addOption("AutoDistance (0.5m)",
+				new AutoDistance(_diffDrive, 0.5, 0.5));
+		chooser.addOption("AutoDuration (3s)",
+				new AutoDuration(_diffDrive, 0.5, 3.0));
+		chooser.addOption("DriveDistance (+0.5m)",
+				new DriveDistance(_diffDrive, 0.5, 0.5));
+		chooser.addOption("DriveDistance (-0.5m)",
+				new DriveDistance(_diffDrive, 0.5, -0.5));
+		chooser.addOption("DriveDuration (3s)",
+				new DriveDuration(_diffDrive, 0.5, 3.0));
+		chooser.addOption("TurnAngle (+90deg)",
+				new TurnAngle(_diffDrive, 0.5, 90.0));
+		chooser.addOption("TurnAngle (-90deg)",
+				new TurnAngle(_diffDrive, 0.5, -90.0));
+		chooser.addOption("TurnDuration (3s)",
+				new TurnDuration(_diffDrive, 0.5, 3.0));
 
 		SmartDashboard.putData(chooser);
 	}

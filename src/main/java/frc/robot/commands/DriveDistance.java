@@ -12,9 +12,9 @@ import frc.jonb.subsystems.DiffDriveSubsystem;
  * Command that drives forward a given distance at a given speed.
  */
 public class DriveDistance extends Command {
-	private final DiffDriveSubsystem m_drive;
-	private final double m_distance;
-	private final double m_speed;
+	private final DiffDriveSubsystem _drive;
+	private final double _distance;
+	private final double _speed;
 
 	/**
 	 * Creates an instance.
@@ -22,38 +22,42 @@ public class DriveDistance extends Command {
 	 * @param drivetrain
 	 *            The target drivetrain.
 	 * @param speedFactor
-	 *            Speed factor relative to max [-1, +1].
-	 * @param meters
-	 *            Distance (m, >=0).
+	 *            Speed factor relative to max [-1, +1]. Sign is ignored --
+	 *            it will be forced to match that of the distance.
+	 * @param distance
+	 *            Distance (+/-m).
 	 */
 	public DriveDistance(DiffDriveSubsystem drive, double speedFactor,
-			double meters) {
-		m_distance = meters;
-		m_speed = speedFactor;
-		m_drive = drive;
+			double distance) {
+		_speed = Math.signum(distance) * Math.abs(speedFactor);
+		_distance = distance;
+		_drive = drive;
 		addRequirements(drive);
 	}
 
 	@Override
 	public void initialize() {
-		m_drive.arcadeDrive(0.0, 0.0);
-		m_drive.resetPose(Pose2d.kZero);
+		_drive.arcadeDrive(0.0, 0.0);
+		_drive.resetPose(Pose2d.kZero);
 	}
 
 	@Override
 	public void execute() {
-		m_drive.arcadeDrive(m_speed, 0);
+		_drive.arcadeDrive(_speed, 0);
 	}
 
 	@Override
 	public void end(boolean interrupted) {
 		// stop drive
-		m_drive.arcadeDrive(0, 0);
+		_drive.arcadeDrive(0, 0);
 	}
 
 	@Override
 	public boolean isFinished() {
-		double distance = m_drive.getPose().getX();
-		return Math.signum(m_distance) * Math.abs(m_distance - distance) <= 0.0;
+		double distance = _drive.getPose().getX();
+		double error = Math.signum(_distance) * (_distance - distance);
+		// System.out.println("DriveDistance: " +
+		// 		"goal=" + _distance + " now=" + distance + " err=" + error);
+		return error <= 0;
 	}
 }

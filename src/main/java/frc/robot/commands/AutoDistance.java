@@ -23,10 +23,10 @@ public class AutoDistance extends SequentialCommandGroup {
 	 * @param distance
 	 *            Distance (m, >=0).
 	 */
-	public AutoDistance(double speedFactor, double distance,
-			DiffDriveSubsystem drivetrain) {
+	public AutoDistance(DiffDriveSubsystem drivetrain, double speedFactor,
+			double distance) {
 		addCommands(
-				new DriveDistance( drivetrain, speedFactor, distance),
+				new DriveDistance(drivetrain, speedFactor, distance),
 				new TurnAngle(drivetrain, speedFactor, 180),
 				new DriveDistance(drivetrain, speedFactor, distance),
 				new TurnAngle(drivetrain, speedFactor, -180));
