@@ -33,28 +33,28 @@ import frc.jonb.sysid.SysIdDrivable;
  */
 public class RomiDriveSubsystem extends SubsystemBase
 		implements DiffDrivable, SysIdDrivable {
-	public static final double WHEEL_TRACKWIDTH_M = 0.141;
+	public static final double WHEEL_TRACKWIDTH_M = 0.1385; //0.141;
 	public static final double WHEEL_ENCODER_CPR = 1440.0;
-	public static final double WHEEL_DIAMETER_M = 0.07;
+	public static final double WHEEL_DIAMETER_M = 0.0697; //0.07;
 	public static final double WHEEL_CIRCUMFERENCE_M = Math.PI
 			* WHEEL_DIAMETER_M;
 	public static final double WHEEL_RPS_MAX = 150.0 / 60.0; // from WPI docs
 	public static final double WHEEL_MPS_MAX = WHEEL_RPS_MAX
 			* WHEEL_CIRCUMFERENCE_M;
 
-	public static final double LEFT_KS = 0.8029;
-	public static final double LEFT_KV = 10.076;
-	public static final double LEFT_KA = 2.0878;
-	public static final double LEFT_KP = 2.7555;
+	public static final double LEFT_KS = 0.73087; // 0.8029;
+	public static final double LEFT_KV = 10.334; // 10.076;
+	public static final double LEFT_KA = 1.5703; // 2.0878;
+	public static final double LEFT_KP = 2.9247; // 2.7555;
 	public static final double LEFT_KI = 0.0000;
 	public static final double LEFT_KD = 0.0000;
 
-	public static final double RIGHT_KS = 0.4714;
-	public static final double RIGHT_KV = 9.7982;
-	public static final double RIGHT_KA = 2.5502;
-	public static final double RIGHT_KP = 3.8658;
-	public static final double RIGHT_KI = 0.00001;
-	public static final double RIGHT_KD = 0.00001;
+	public static final double RIGHT_KS = 0.79424; // 0.4714;
+	public static final double RIGHT_KV = 7.5; // 9.8306; //9.7982;
+	public static final double RIGHT_KA = 1.4868; // 2.5502;
+	public static final double RIGHT_KP = 2.7573; // 3.8658;
+	public static final double RIGHT_KI = 0.00000;
+	public static final double RIGHT_KD = 0.00000;
 
 	/** Creates a new Drivetrain. */
 	public RomiDriveSubsystem() {
@@ -94,10 +94,27 @@ public class RomiDriveSubsystem extends SubsystemBase
 
 	@Override
 	public void setWheelVelocity(double leftMps, double rightMps) {
-		_leftMotor.setVoltage(_leftFeedforward.calculate(leftMps)
-				+ _leftVelocityPid.calculate(getLeftVelocity(), leftMps));
-		_rightMotor.setVoltage(_rightFeedforward.calculate(rightMps)
-				+ _rightVelocityPid.calculate(getRightVelocity(), rightMps));
+		// leftMps *= 0.3;
+		// rightMps *= 0.3;
+
+		// leftMps = MathUtils.clamp(leftMps, -1.0, +1.0);
+		// rightMps = MathUtils.clamp(rightMps, -1.0, +1.0);
+
+		double leftFfw = _leftFeedforward.calculate(leftMps);
+		double rightFfw = _rightFeedforward.calculate(rightMps);
+
+		double leftPid = _leftVelocityPid.calculate(getLeftVelocity(),
+				leftMps);
+		double rightPid = _rightVelocityPid.calculate(getRightVelocity(),
+				rightMps);
+
+		// System.out.printf(
+		// "spd=%5.2f err=%5.2f pid=%5.2f ffw=%5.2f vlt=%6.2f\n",
+		// leftMps, leftMps - getLeftVelocity(), leftPid, leftFfw,
+		// leftPid + leftFfw);
+
+		_leftMotor.setVoltage(leftFfw + leftPid);
+		_rightMotor.setVoltage(rightFfw + rightPid);
 	}
 
 	@Override
@@ -133,6 +150,7 @@ public class RomiDriveSubsystem extends SubsystemBase
 
 	@Override
 	public Rotation2d getRotationZ() {
+		// System.out.printf("gyroZ=%7.1f\n", -_gyro.getAngleZ());
 		return Rotation2d.fromDegrees(-_gyro.getAngleZ());
 	}
 
@@ -175,16 +193,16 @@ public class RomiDriveSubsystem extends SubsystemBase
 
 	// personal
 
-	private List<Subsystem> _subsystems = new ArrayList<>();
+	private final List<Subsystem> _subsystems = new ArrayList<>();
 	private final Spark _leftMotor;
 	private final Encoder _leftEncoder;
 	private final SimpleMotorFeedforward _leftFeedforward;
-	private PIDController _leftVelocityPid;
+	private final PIDController _leftVelocityPid;
 
 	private final Spark _rightMotor;
 	private final Encoder _rightEncoder;
 	private final SimpleMotorFeedforward _rightFeedforward;
-	private PIDController _rightVelocityPid;
+	private final PIDController _rightVelocityPid;
 
 	private final RomiGyro _gyro = new RomiGyro();
 

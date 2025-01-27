@@ -69,7 +69,7 @@ public class RobotContainer {
 
 		// default commands
 		// Note: This runs unless another command is scheduled over it.
-		_diffDrive.setDefaultCommand(getArcadeDriveCommand());
+		////_diffDrive.setDefaultCommand(getArcadeDriveCommand());
 	}
 
 	/**
@@ -94,20 +94,26 @@ public class RobotContainer {
 				new PathPlannerAuto("MyAutoPath"));
 		chooser.addOption("AutoDistance (0.5m)",
 				new AutoDistance(_diffDrive, 0.5, 0.5));
-		chooser.addOption("AutoDuration (3s)",
-				new AutoDuration(_diffDrive, 0.5, 3.0));
 		chooser.addOption("DriveDistance (+0.5m)",
 				new DriveDistance(_diffDrive, 0.5, 0.5));
 		chooser.addOption("DriveDistance (-0.5m)",
 				new DriveDistance(_diffDrive, 0.5, -0.5));
-		chooser.addOption("DriveDuration (3s)",
-				new DriveDuration(_diffDrive, 0.5, 3.0));
 		chooser.addOption("TurnAngle (+90deg)",
 				new TurnAngle(_diffDrive, 0.5, 90.0));
 		chooser.addOption("TurnAngle (-90deg)",
 				new TurnAngle(_diffDrive, 0.5, -90.0));
-		chooser.addOption("TurnDuration (3s)",
-				new TurnDuration(_diffDrive, 0.5, 3.0));
+
+		double targetSec = 4.0;
+		double targetMps = 0.125;
+		double targetFac = targetMps / _diffDrive.getDrive()
+				.getWheelVelocityMax();
+				
+		chooser.addOption("AutoDuration (" + targetSec + "s)",
+				new AutoDuration(_diffDrive, targetFac, targetSec));
+		chooser.addOption("DriveDuration (" + targetSec + "s)",
+				new DriveDuration(_diffDrive, targetFac, targetSec));
+		chooser.addOption("TurnDuration (" + targetSec + "s)",
+				new TurnDuration(_diffDrive, targetFac, targetSec));
 
 		SmartDashboard.putData(chooser);
 	}

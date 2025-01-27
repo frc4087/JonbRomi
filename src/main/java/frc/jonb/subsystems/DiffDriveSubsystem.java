@@ -18,8 +18,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.jonb.pathplanner.PPDrivable;
 
 /**
- * A differential drive Subsystem wthat wraps a target DiffDrivable to provide
- * high level drive modes and PathPlanner.
+ * A differential drive Subsystem that wraps a target DiffDrivable to provide
+ * high level drive modes and PathPlanner support.
  */
 public class DiffDriveSubsystem extends SubsystemBase implements PPDrivable {
 	/**
@@ -41,7 +41,15 @@ public class DiffDriveSubsystem extends SubsystemBase implements PPDrivable {
 				_drive.getTrackWidth());
 		_odometry = new DifferentialDriveOdometry(
 				new Rotation2d(), 0.0, 0.0);
+	}
 
+	/**
+	 * Gets the target drivetrain.
+	 * 
+	 * @return Shared exposed drivetrain.
+	 */
+	public DiffDrivable getDrive() {
+		return _drive;
 	}
 
 	/**
@@ -53,11 +61,11 @@ public class DiffDriveSubsystem extends SubsystemBase implements PPDrivable {
 	 *            Rotation CCW speed factor [-1,+1].
 	 */
 	public void arcadeDrive(double forwardFactor, double ccwFactor) {
-		WheelSpeeds wheelSpeeds = DifferentialDrive.arcadeDriveIK(
+		WheelSpeeds wheelSpeedFactors = DifferentialDrive.arcadeDriveIK(
 				forwardFactor, ccwFactor, true);
 		_drive.setWheelVelocity(
-				wheelSpeeds.left * _drive.getWheelVelocityMax(),
-				wheelSpeeds.right * _drive.getWheelVelocityMax());
+				wheelSpeedFactors.left * _drive.getWheelVelocityMax(),
+				wheelSpeedFactors.right * _drive.getWheelVelocityMax());
 	}
 
 	/**
