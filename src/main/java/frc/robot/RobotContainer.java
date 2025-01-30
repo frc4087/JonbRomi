@@ -51,7 +51,7 @@ public class RobotContainer {
 	 * Creates an instance.
 	 */
 	public RobotContainer() {
-		// build subsystems
+		// build drivetrain
 		DiffDrivable romiDrive = new RomiDriveSubsystem();
 		_diffDrive = new DiffDriveSubsystem(romiDrive);
 
@@ -91,7 +91,7 @@ public class RobotContainer {
 	 */
 	protected void configChooser(SendableChooser<Command> chooser) {
 		chooser.setDefaultOption("PathPlanner",
-				new PathPlannerAuto("MyAutoPath"));
+				new PathPlannerAuto("LoopAutoPath"));
 		chooser.addOption("AutoDistance (0.5m)",
 				new AutoDistance(_diffDrive, 0.5, 0.5));
 		chooser.addOption("DriveDistance (+0.5m)",
